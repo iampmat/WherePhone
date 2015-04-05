@@ -50,7 +50,7 @@ public class WherePhoneActivity extends Activity implements RecognitionListener 
                     @Override
                     public void onInit(int status) {
                         if(status != TextToSpeech.ERROR){
-                            reply.setLanguage(Locale.UK);
+                            reply.setLanguage(Locale.US);
                         }
                     }
                 });
@@ -63,7 +63,7 @@ public class WherePhoneActivity extends Activity implements RecognitionListener 
         sOutput = etOutput.getText().toString();
 
         // Restart the recognizer if it was running
-        recognizer.shutdown();
+        //recognizer.shutdown();
 
         new AsyncTask<Void, Void, Exception>() {
             @Override
