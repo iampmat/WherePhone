@@ -20,8 +20,17 @@
         android:layout_alignParentRight="true"
         android:layout_marginBottom="188dp"
         android:layout_marginRight="67dp"
-        android:onClick="startRecognizer"
+        android:onClick="beginRecognizer"
         android:text="@string/save_button" />
+
+    <Button
+        android:id="@+id/endBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:onClick="onDestroy"
+        android:text="@string/stop_button" />
 
     <FrameLayout
         android:layout_width="match_parent"

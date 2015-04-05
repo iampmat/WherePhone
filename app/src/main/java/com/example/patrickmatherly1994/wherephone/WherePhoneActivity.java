@@ -35,6 +35,8 @@ public class WherePhoneActivity extends Activity implements RecognitionListener 
 
     private TextToSpeech reply;
 
+    private  AsyncTask t;
+
     @Override
     public void onCreate(Bundle state) {
         super.onCreate(state);
@@ -56,7 +58,7 @@ public class WherePhoneActivity extends Activity implements RecognitionListener 
                 });
     }
 
-    public void startRecognizer(View view) {
+    public void beginRecognizer(View view) {
         // Recognizer initialization, Include resource files in form of assets
         // Call switchsearch on the keyphrase
         sInput = etInput.getText().toString();
@@ -65,7 +67,7 @@ public class WherePhoneActivity extends Activity implements RecognitionListener 
         // Restart the recognizer if it was running
         //recognizer.shutdown();
 
-        new AsyncTask<Void, Void, Exception>() {
+        t = new AsyncTask<Void, Void, Exception>() {
             @Override
             protected Exception doInBackground(Void... params) {
                 try {
@@ -143,13 +145,14 @@ public class WherePhoneActivity extends Activity implements RecognitionListener 
         String text = hypothesis.getHypstr();
         if (text.equals(sInput)) {
             // Text to speech
+            ((TextView) findViewById(R.id.result_text)).setText(sInput);
             reply.speak(sOutput, TextToSpeech.QUEUE_ADD, null);
 
             // Restart the recognizer
             if(!reply.isSpeaking()){ recognizer.stop(); }
             switchSearch(sInput);
         }
-        else{ ((TextView) findViewById(R.id.result_text)).setText(text); }
+        else{ ((TextView) findViewById(R.id.result_text)).setText("Try again"); }
     }
 
     @Override
@@ -157,7 +160,6 @@ public class WherePhoneActivity extends Activity implements RecognitionListener 
         ((TextView) findViewById(R.id.result_text)).setText("");
         if (hypothesis != null) {
             String text = hypothesis.getHypstr();
-            ((TextView) findViewById(R.id.result_text)).setText(text);
             makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
         }
     }
@@ -173,13 +175,10 @@ public class WherePhoneActivity extends Activity implements RecognitionListener 
     }
 
 
-    // Used for the texttospeech reply
-    @Override
-    public void onPause(){
-        if(reply !=null){
-            reply.stop();
-            reply.shutdown();
-        }
-        super.onPause();
+    public void onDestroy() {
+        super.onDestroy();
+        recognizer.cancel();
+        recognizer.shutdown();
+        t.cancel(true);
     }
 }
