@@ -62,6 +62,9 @@ public class WherePhoneActivity extends Activity implements RecognitionListener 
         sInput = etInput.getText().toString();
         sOutput = etOutput.getText().toString();
 
+        // Restart the recognizer if it was running
+        recognizer.shutdown();
+
         new AsyncTask<Void, Void, Exception>() {
             @Override
             protected Exception doInBackground(Void... params) {
