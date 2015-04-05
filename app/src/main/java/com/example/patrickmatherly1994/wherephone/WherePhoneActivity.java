@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,12 +27,22 @@ public class WherePhoneActivity extends Activity implements RecognitionListener 
     private SpeechRecognizer recognizer;
     private static final String KEYPHRASE = "where is my phone";
 
+    private EditText etInput;
+    private EditText etOutput;
+
+    private String sInput;
+    private String sOutput;
+
     private TextToSpeech reply;
 
     @Override
     public void onCreate(Bundle state) {
         super.onCreate(state);
         setContentView(R.layout.activity_where_phone);
+
+        // init edittexts
+        etInput = (EditText) findViewById(R.id.et_input);
+        etOutput = (EditText) findViewById(R.id.et_output);
 
         // Set up the texttospeech on reply
         reply=new TextToSpeech(getApplicationContext(),
@@ -42,9 +54,14 @@ public class WherePhoneActivity extends Activity implements RecognitionListener 
                         }
                     }
                 });
+    }
 
+    public void startRecognizer(View view) {
         // Recognizer initialization, Include resource files in form of assets
         // Call switchsearch on the keyphrase
+        sInput = etInput.getText().toString();
+        sOutput = etOutput.getText().toString();
+
         new AsyncTask<Void, Void, Exception>() {
             @Override
             protected Exception doInBackground(Void... params) {
@@ -64,7 +81,7 @@ public class WherePhoneActivity extends Activity implements RecognitionListener 
                     ((TextView) findViewById(R.id.caption_text))
                             .setText("Failed to init recognizer " + result);
                 } else {
-                    switchSearch(KEYPHRASE);
+                    switchSearch(sInput);
                 }
             }
         }.execute();
@@ -88,14 +105,14 @@ public class WherePhoneActivity extends Activity implements RecognitionListener 
         recognizer.addListener(this);
 
         // Create keyword-activation search.
-        recognizer.addKeyphraseSearch(KEYPHRASE, KEYPHRASE);
+        recognizer.addKeyphraseSearch(sInput, sInput);
     }
 
     private void switchSearch(String searchName) {
         recognizer.stop();
 
         // If we are not spotting, start listening with timeout (10000 ms or 10 seconds).
-        if (searchName.equals(KEYPHRASE))
+        if (searchName.equals(sInput))
             recognizer.startListening(searchName);
         else
             recognizer.startListening(searchName, 10000);
@@ -111,9 +128,8 @@ public class WherePhoneActivity extends Activity implements RecognitionListener 
 
     @Override
     public void onEndOfSpeech() {
-        if (!recognizer.getSearchName().equals(KEYPHRASE))
-            switchSearch(KEYPHRASE);
-        ((TextView) findViewById(R.id.result_text)).setText("");
+        if (!recognizer.getSearchName().equals(sInput))
+            switchSearch(sInput);
     }
 
     @Override
@@ -122,12 +138,13 @@ public class WherePhoneActivity extends Activity implements RecognitionListener 
             return;
 
         String text = hypothesis.getHypstr();
-        if (text.equals(KEYPHRASE)) {
-            // set result_text to the partial result
-            ((TextView) findViewById(R.id.result_text)).setText(text);
-            reply.speak("I am here", TextToSpeech.QUEUE_ADD, null);
+        if (text.equals(sInput)) {
+            // Text to speech
+            reply.speak(sOutput, TextToSpeech.QUEUE_ADD, null);
+
+            // Restart the recognizer
             if(!reply.isSpeaking()){ recognizer.stop(); }
-            switchSearch(KEYPHRASE);
+            switchSearch(sInput);
         }
         else{ ((TextView) findViewById(R.id.result_text)).setText(text); }
     }
@@ -137,6 +154,7 @@ public class WherePhoneActivity extends Activity implements RecognitionListener 
         ((TextView) findViewById(R.id.result_text)).setText("");
         if (hypothesis != null) {
             String text = hypothesis.getHypstr();
+            ((TextView) findViewById(R.id.result_text)).setText(text);
             makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
         }
     }
@@ -148,7 +166,7 @@ public class WherePhoneActivity extends Activity implements RecognitionListener 
 
     @Override
     public void onTimeout() {
-        switchSearch(KEYPHRASE);
+        switchSearch(sInput);
     }
 
 
@@ -161,14 +179,4 @@ public class WherePhoneActivity extends Activity implements RecognitionListener 
         }
         super.onPause();
     }
-
-    /*
-    // Used to execute the text to speech
-    public void speakText(){
-        String toSpeak = "I am here";
-        Toast.makeText(getApplicationContext(), toSpeak,
-                Toast.LENGTH_SHORT).show();
-        reply.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
-    }
-    */
 }
