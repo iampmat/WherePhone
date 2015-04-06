@@ -3,27 +3,6 @@
     android:layout_height="fill_parent"
     android:orientation="vertical"
     android:padding="16dp" >
-
-    <TextView
-        android:id="@+id/caption_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:typeface="sans" />
-    
-    <Switch
-        android:id="@+id/saveSwtch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="20dp"
-        android:text="@string/save_switch" />
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
     
     <EditText
         android:id="@+id/et_input"
@@ -31,7 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:ems="10"
-        android:paddingLeft="40dp" />
+        android:paddingLeft="10dp" />
         
     <TextView
         android:layout_width="wrap_content"
@@ -40,11 +19,6 @@
         android:text="Answer to?"
         android:paddingLeft="10dp" />
 
-    </FrameLayout>
-
-    <FrameLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
 
     <EditText
         android:id="@+id/et_output"
@@ -52,7 +26,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:ems="10"
-        android:paddingLeft="40dp" />
+        android:paddingLeft="10dp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -61,18 +35,14 @@
         android:text="Response?"
         android:paddingLeft="10dp" />
 
-    </FrameLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:gravity="center" >
+    <Switch
+        android:id="@+id/ioSwitch"
+        android:paddingTop="30dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:text="@string/save_switch" />
 
-        <TextView
-            android:id="@+id/result_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-    </LinearLayout>
 </LinearLayout>
