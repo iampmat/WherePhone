@@ -4,10 +4,12 @@ import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
-import android.view.View;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.CompoundButton;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,7 +27,8 @@ import static edu.cmu.pocketsphinx.SpeechRecognizerSetup.defaultSetup;
 public class WherePhoneActivity extends Activity implements RecognitionListener {
 
     private SpeechRecognizer recognizer;
-    private static final String KEYPHRASE = "where is my phone";
+
+    private Switch ioSwitch;
 
     private EditText etInput;
     private EditText etOutput;
@@ -42,13 +45,24 @@ public class WherePhoneActivity extends Activity implements RecognitionListener 
         super.onCreate(state);
         setContentView(R.layout.activity_where_phone);
 
+        // Set up Switch, beginRec when on, shutdown rec when off
+        ioSwitch = (Switch) findViewById(R.id.ioSwitch);
+        ioSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked)
+                    beginRecognizer();
+                else if(!isChecked)
+                    onDestroy();
+            }
+        });
+
         // init edittexts
         etInput = (EditText) findViewById(R.id.et_input);
         etOutput = (EditText) findViewById(R.id.et_output);
 
         // Set up the texttospeech on reply
-        reply=new TextToSpeech(getApplicationContext(),
-                new TextToSpeech.OnInitListener() {
+        reply=new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
                     @Override
                     public void onInit(int status) {
                         if(status != TextToSpeech.ERROR){
@@ -58,7 +72,7 @@ public class WherePhoneActivity extends Activity implements RecognitionListener 
                 });
     }
 
-    public void beginRecognizer(View view) {
+    private void beginRecognizer() {
         // Recognizer initialization, Include resource files in form of assets
         // Call switchsearch on the keyphrase
         sInput = etInput.getText().toString();
@@ -162,7 +176,6 @@ public class WherePhoneActivity extends Activity implements RecognitionListener 
         ((TextView) findViewById(R.id.result_text)).setText("");
         if (hypothesis != null) {
             // restart listener and affirm that partial has past
-            String text = hypothesis.getHypstr();
             makeText(getApplicationContext(), "end", Toast.LENGTH_SHORT).show();
             //recognizer.startListening(sInput);
         }
@@ -178,7 +191,7 @@ public class WherePhoneActivity extends Activity implements RecognitionListener 
         switchSearch(sInput);
     }
 
-
+    @Override
     public void onDestroy() {
         super.onDestroy();
         recognizer.cancel();

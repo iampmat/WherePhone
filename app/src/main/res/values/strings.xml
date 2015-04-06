@@ -10,6 +10,5 @@
     <string name="forecast_caption">To try recognition of a weather forecast like \"sunny spells on Wednesday\".</string>
     <string name="phone_caption">To try phonetic recognition say anything.</string>
 
-    <string name="save_button">Save and Start</string>
-    <string name="stop_button">Stop</string>
+    <string name="save_switch">Turn Recognition ON/OFF</string>
 </resources>
