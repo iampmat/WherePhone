@@ -98,7 +98,7 @@ public class WherePhoneActivity extends Activity implements RecognitionListener 
                 .setDictionary(new File(assetsDir, "cmudict-en-us.dict"))
 
                         // To disable logging of raw audio comment out this call (takes a lot of space on the device)
-                .setRawLogDir(assetsDir)
+                // .setRawLogDir(assetsDir)
 
                         // Threshold to tune for keyphrase to balance between false alarms and misses
                 .setKeywordThreshold(1e-45f)
@@ -145,14 +145,12 @@ public class WherePhoneActivity extends Activity implements RecognitionListener 
         String text = hypothesis.getHypstr();
         if (text.equals(sInput)) {
             // Text to speech
-            ((TextView) findViewById(R.id.result_text)).setText(sInput);
             reply.speak(sOutput, TextToSpeech.QUEUE_ADD, null);
 
             // Restart the recognizer
             if(!reply.isSpeaking()){ recognizer.stop(); }
             switchSearch(sInput);
         }
-        else{ ((TextView) findViewById(R.id.result_text)).setText("Try again"); }
     }
 
     @Override
