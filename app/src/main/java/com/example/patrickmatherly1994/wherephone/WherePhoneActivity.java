@@ -98,7 +98,7 @@ public class WherePhoneActivity extends Activity implements RecognitionListener 
                 .setDictionary(new File(assetsDir, "cmudict-en-us.dict"))
 
                         // To disable logging of raw audio comment out this call (takes a lot of space on the device)
-                // .setRawLogDir(assetsDir)
+                .setRawLogDir(assetsDir)
 
                         // Threshold to tune for keyphrase to balance between false alarms and misses
                 .setKeywordThreshold(1e-45f)
@@ -143,12 +143,16 @@ public class WherePhoneActivity extends Activity implements RecognitionListener 
             return;
 
         String text = hypothesis.getHypstr();
+        makeText(getApplicationContext(), "Partial", Toast.LENGTH_SHORT).show();
+
         if (text.equals(sInput)) {
             // Text to speech
             reply.speak(sOutput, TextToSpeech.QUEUE_ADD, null);
-
-            // Restart the recognizer
-            if(!reply.isSpeaking()){ recognizer.stop(); }
+            // Restart the recognizer so it will not loop
+            // Not needed I think... if(!reply.isSpeaking()){ recognizer.stop(); }
+            switchSearch(sInput);
+        }
+        else {
             switchSearch(sInput);
         }
     }
@@ -157,8 +161,10 @@ public class WherePhoneActivity extends Activity implements RecognitionListener 
     public void onResult(Hypothesis hypothesis) {
         ((TextView) findViewById(R.id.result_text)).setText("");
         if (hypothesis != null) {
+            // restart listener and affirm that partial has past
             String text = hypothesis.getHypstr();
-            makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
+            makeText(getApplicationContext(), "end", Toast.LENGTH_SHORT).show();
+            //recognizer.startListening(sInput);
         }
     }
 
