@@ -75,8 +75,8 @@ public class WherePhoneActivity extends Activity implements RecognitionListener 
     private void beginRecognizer() {
         // Recognizer initialization, Include resource files in form of assets
         // Call switchsearch on the keyphrase
-        sInput = etInput.getText().toString();
-        sOutput = etOutput.getText().toString();
+        sInput = etInput.getText().toString().toLowerCase();
+        sOutput = etOutput.getText().toString().toLowerCase();
 
         // Restart the recognizer if it was running
         //recognizer.shutdown();
