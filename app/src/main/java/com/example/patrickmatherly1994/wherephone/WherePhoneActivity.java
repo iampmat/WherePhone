@@ -75,7 +75,7 @@ public class WherePhoneActivity extends Activity implements RecognitionListener 
     private void beginRecognizer() {
         // Recognizer initialization, Include resource files in form of assets
         // Call switchsearch on the keyphrase
-        sInput = etInput.getText().toString().toLowerCase().replaceAll("[-+.^:,!?$%#@&()=`~/><;1234567890]","");
+        sInput = etInput.getText().toString().toLowerCase().replaceAll("[^\\w\\s]","");
         makeText(getApplicationContext(), sInput, Toast.LENGTH_SHORT).show();
         sOutput = etOutput.getText().toString().toLowerCase();
 
@@ -158,7 +158,7 @@ public class WherePhoneActivity extends Activity implements RecognitionListener 
             return;
 
         String text = hypothesis.getHypstr();
-        //makeText(getApplicationContext(), "Partial", Toast.LENGTH_SHORT).show();
+        makeText(getApplicationContext(), "Partial", Toast.LENGTH_SHORT).show();
 
         if (text.equals(sInput)) {
             // Text to speech
@@ -168,6 +168,7 @@ public class WherePhoneActivity extends Activity implements RecognitionListener 
             switchSearch(sInput);
         }
         else {
+            makeText(getApplicationContext(), "Try again", Toast.LENGTH_SHORT).show();
             switchSearch(sInput);
         }
     }
