@@ -1,7 +1,9 @@
 package com.example.patrickmatherly1994.wherephone;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.os.AsyncTask;
 import android.os.IBinder;
 import android.speech.tts.TextToSpeech;
@@ -26,6 +28,7 @@ public class WherePhoneService extends Service implements RecognitionListener {
     private String sInput;
     private String sOutput;
 
+    private int seekVal;
     private TextToSpeech reply;
 
     private AsyncTask t;
@@ -47,16 +50,18 @@ public class WherePhoneService extends Service implements RecognitionListener {
         // get keyword strings from main activity
         sInput = intent.getStringExtra("sInput");
         sOutput = intent.getStringExtra("sOutput");
+        seekVal = intent.getIntExtra("seekVal", 1);
 
         // Set up the texttospeech on reply
-        reply=new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+        reply = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
                 if(status != TextToSpeech.ERROR){
-                    reply.setLanguage(Locale.US);
+                    reply.setLanguage(Locale.UK);
                 }
             }
         });
+        // Set reply volume
 
         t = new AsyncTask<Void, Void, Exception>() {
             @Override
@@ -138,6 +143,8 @@ public class WherePhoneService extends Service implements RecognitionListener {
         makeText(getApplicationContext(), "Partial", Toast.LENGTH_SHORT).show();
 
         if (text.equals(sInput)) {
+            AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+            audioManager.setStreamVolume(audioManager.STREAM_MUSIC, seekVal, 0);
             // Text to speech
             reply.speak(sOutput, TextToSpeech.QUEUE_ADD, null);
             // Restart the recognizer so it will not loop

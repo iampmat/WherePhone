@@ -46,4 +46,19 @@
         android:layout_alignParentTop="true"
         android:text="@string/save_switch" />
 
+    <SeekBar
+        android:id="@+id/vSeekBar"
+        android:paddingTop="30dp"
+        android:max="15"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:indeterminate="false" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:text="Response Volume"
+        android:paddingLeft="10dp" />
+
 </LinearLayout>
