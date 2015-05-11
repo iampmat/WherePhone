@@ -143,7 +143,10 @@ public class WherePhoneService extends Service implements RecognitionListener {
         makeText(getApplicationContext(), "Partial", Toast.LENGTH_SHORT).show();
 
         if (text.equals(sInput)) {
+            // Convert volume to proper input
             AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+            int getMaxPhoneVol = audioManager.getStreamMaxVolume(audioManager.STREAM_MUSIC);
+            seekVal = (int) ((seekVal * getMaxPhoneVol)/100);
             audioManager.setStreamVolume(audioManager.STREAM_MUSIC, seekVal, 0);
             // Text to speech
             reply.speak(sOutput, TextToSpeech.QUEUE_ADD, null);

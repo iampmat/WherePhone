@@ -49,7 +49,7 @@
     <SeekBar
         android:id="@+id/vSeekBar"
         android:paddingTop="30dp"
-        android:max="15"
+        android:max="100"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:indeterminate="false" />
