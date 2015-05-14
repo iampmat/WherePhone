@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:allowBackup="true"
@@ -22,12 +23,17 @@
             </intent-filter>
         </activity>
 
-
         <service
             android:name=".WherePhoneService"
             android:enabled="true"
             android:exported="true" >
         </service>
+
+        <receiver
+            android:name=".BootCompleteIntentReceiver"
+            android:enabled="true"
+            android:exported="true" >
+        </receiver>
     </application>
 
 </manifest>

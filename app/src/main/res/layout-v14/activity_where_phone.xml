@@ -46,6 +46,7 @@
         android:layout_alignParentTop="true"
         android:text="@string/save_switch" />
 
+
     <SeekBar
         android:id="@+id/vSeekBar"
         android:paddingTop="30dp"
