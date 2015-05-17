@@ -3,6 +3,7 @@ package com.example.patrickmatherly1994.wherephone;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.os.AsyncTask;
 import android.os.IBinder;
@@ -22,6 +23,9 @@ import static android.widget.Toast.makeText;
 import static edu.cmu.pocketsphinx.SpeechRecognizerSetup.defaultSetup;
 
 public class WherePhoneService extends Service implements RecognitionListener {
+
+    private static String SettingStorage = "SavedData";
+    SharedPreferences settingData;
 
     private SpeechRecognizer recognizer;
 
@@ -46,11 +50,8 @@ public class WherePhoneService extends Service implements RecognitionListener {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         makeText(getApplicationContext(), "onHandle start", Toast.LENGTH_SHORT).show();
-
         // get keyword strings from main activity
-        sInput = intent.getStringExtra("sInput");
-        sOutput = intent.getStringExtra("sOutput");
-        seekVal = intent.getIntExtra("seekVal", 1);
+        getValues();
 
         // Set up the texttospeech on reply
         reply = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
@@ -85,7 +86,7 @@ public class WherePhoneService extends Service implements RecognitionListener {
                 }
             }
         }.execute();
-        return Service.START_REDELIVER_INTENT;
+        return Service.START_STICKY;
     }
 
     private void setupRecognizer(File assetsDir) throws IOException {
@@ -143,18 +144,12 @@ public class WherePhoneService extends Service implements RecognitionListener {
         makeText(getApplicationContext(), "Partial", Toast.LENGTH_SHORT).show();
 
         if (text.equals(sInput)) {
-            // Save context volume and Convert volume to proper input
-            AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-            int ctxtVol = audioManager.getStreamVolume(audioManager.STREAM_MUSIC);
-            int getMaxPhoneVol = audioManager.getStreamMaxVolume(audioManager.STREAM_MUSIC);
-            seekVal = (int) ((seekVal * getMaxPhoneVol)/100);
-            audioManager.setStreamVolume(audioManager.STREAM_MUSIC, seekVal, 0);
+
+            setVolume();
 
             // Text to speech
             reply.speak(sOutput, TextToSpeech.QUEUE_ADD, null);
 
-            // Restart the recognizer so it will not loop
-            // This sets volume to pre-tts volume -- audioManager.setStreamVolume(audioManager.STREAM_MUSIC, ctxtVol, 0);
             switchSearch(sInput);
         }
         else {
@@ -183,9 +178,25 @@ public class WherePhoneService extends Service implements RecognitionListener {
         switchSearch(sInput);
     }
 
+    public void getValues() {
+        settingData = getBaseContext().getSharedPreferences(SettingStorage, 0);
+        sInput = settingData.getString("inputstring", "Where is my phone").toString().toLowerCase().replaceAll("[^\\w\\s]", "");
+        sOutput = settingData.getString("outputstring", "").toString().toLowerCase();
+        seekVal = settingData.getInt("seekval", 0);
+    }
+
+    public void setVolume() {
+        int seekValConvert = 0;
+        AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        int getMaxPhoneVol = audioManager.getStreamMaxVolume(audioManager.STREAM_MUSIC);
+        seekValConvert = ((seekVal * getMaxPhoneVol)/100);
+        audioManager.setStreamVolume(audioManager.STREAM_MUSIC, seekValConvert, 0);
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
+        makeText(getApplicationContext(), "destroy", Toast.LENGTH_SHORT).show();
         recognizer.cancel();
         recognizer.shutdown();
         t.cancel(true);

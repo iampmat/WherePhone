@@ -24,7 +24,7 @@ public class WherePhoneActivity extends Activity {
     private SeekBar seekBar;
     private int seekVal;
 
-    private static String SettingStorage = "SavedData";
+    public static String SettingStorage = "SavedData";
     SharedPreferences settingData;
 
     @Override
@@ -34,11 +34,11 @@ public class WherePhoneActivity extends Activity {
 
         initializeVariables();
 
-        populateAllSettings();
-
         setSeekBarChangeListener();
 
         setSwitchChangeListener();
+
+        populateAllSettings();
 
     }
 
@@ -67,18 +67,20 @@ public class WherePhoneActivity extends Activity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
 
-                    // Stop service first??
-                    // stopService(new Intent(getBaseContext(), WherePhoneService.class));
+                    // Stop service first?
+                    stopService(new Intent(getBaseContext(), WherePhoneService.class));
 
                     saveAllSettings(isChecked);
 
                     disableInput();
 
-                    // Set up intent and attach keywords
                     rIntent = new Intent(getBaseContext(), WherePhoneService.class);
+
+                    /* Set up intent and attach keywords
                     rIntent.putExtra("sInput", etInput.getText().toString().toLowerCase().replaceAll("[^\\w\\s]", ""));
                     rIntent.putExtra("sOutput", etOutput.getText().toString().toLowerCase());
                     rIntent.putExtra("seekVal", seekVal);
+                    */
 
                     startService(rIntent);
                 } else if (!isChecked) {
@@ -96,6 +98,7 @@ public class WherePhoneActivity extends Activity {
         etOutput.setText(settingData.getString("outputstring", ""), TextView.BufferType.EDITABLE);
         seekBar.setProgress(settingData.getInt("seekval", 0));
         ioSwitch.setChecked(settingData.getBoolean("isOn", false));
+        if(ioSwitch.isChecked()) { disableInput(); }
     }
 
     public void saveAllSettings(boolean isChecked) {
