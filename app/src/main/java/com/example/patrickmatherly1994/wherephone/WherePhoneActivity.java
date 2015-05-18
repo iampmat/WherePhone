@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
@@ -14,7 +16,7 @@ import android.widget.TextView;
 
 public class WherePhoneActivity extends Activity {
 
-    private Intent rIntent;
+    public static Intent rIntent;
 
     private Switch ioSwitch;
 
@@ -38,8 +40,30 @@ public class WherePhoneActivity extends Activity {
 
         setSwitchChangeListener();
 
+        setEditTextOnFocusChangeListener();
+
         populateAllSettings();
 
+    }
+
+    public void setEditTextOnFocusChangeListener() {
+        etInput.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    hideKeyboard(v);
+                }
+            }
+        });
+
+        etOutput.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    hideKeyboard(v);
+                }
+            }
+        });
     }
 
     public void setSeekBarChangeListener() {
@@ -67,11 +91,11 @@ public class WherePhoneActivity extends Activity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
 
-                    // Stop service first?
                     stopService(new Intent(getBaseContext(), WherePhoneService.class));
 
                     saveAllSettings(isChecked);
 
+                    // Closes the keyboard
                     disableInput();
 
                     rIntent = new Intent(getBaseContext(), WherePhoneService.class);
@@ -83,7 +107,8 @@ public class WherePhoneActivity extends Activity {
                     */
 
                     startService(rIntent);
-                } else if (!isChecked) {
+                }
+                else if (!isChecked) {
                     stopService(rIntent);
                     saveAllSettings(isChecked);
                     enableInput();
@@ -121,6 +146,11 @@ public class WherePhoneActivity extends Activity {
         etInput.setFocusable(false);
         etOutput.setFocusable(false);
         seekBar.setEnabled(false);
+    }
+
+    public void hideKeyboard(View view) {
+        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
     public void initializeVariables() {

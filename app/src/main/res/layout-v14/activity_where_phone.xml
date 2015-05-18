@@ -2,7 +2,9 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical"
-    android:padding="16dp" >
+    android:padding="16dp"
+    android:clickable="true"
+    android:focusableInTouchMode="true" >
     
     <EditText
         android:id="@+id/et_input"
@@ -61,5 +63,13 @@
         android:layout_gravity="center_vertical"
         android:text="Response Volume"
         android:paddingLeft="10dp" />
+
+    <TextView
+        android:id="@+id/load"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:paddingLeft="10dp" />
+
 
 </LinearLayout>

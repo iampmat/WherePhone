@@ -50,19 +50,10 @@ public class WherePhoneService extends Service implements RecognitionListener {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         makeText(getApplicationContext(), "onHandle start", Toast.LENGTH_SHORT).show();
-        // get keyword strings from main activity
+
         getValues();
 
-        // Set up the texttospeech on reply
-        reply = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int status) {
-                if(status != TextToSpeech.ERROR){
-                    reply.setLanguage(Locale.UK);
-                }
-            }
-        });
-        // Set reply volume
+        startTTS();
 
         t = new AsyncTask<Void, Void, Exception>() {
             @Override
@@ -90,24 +81,32 @@ public class WherePhoneService extends Service implements RecognitionListener {
     }
 
     private void setupRecognizer(File assetsDir) throws IOException {
-        recognizer = defaultSetup()
-                .setAcousticModel(new File(assetsDir, "en-us-ptm"))
-                .setDictionary(new File(assetsDir, "cmudict-en-us.dict"))
+        try {
+            recognizer = defaultSetup()
+                    .setAcousticModel(new File(assetsDir, "en-us-ptm"))
+                    .setDictionary(new File(assetsDir, "cmudict-en-us.dict"))
 
-                        // To disable logging of raw audio comment out this call (takes a lot of space on the device)
-                        //.setRawLogDir(assetsDir)
+                            // To disable logging of raw audio comment out this call (takes a lot of space on the device)
+                            //.setRawLogDir(assetsDir)
 
-                        // Threshold to tune for keyphrase to balance between false alarms and misses
-                .setKeywordThreshold(1e-45f)
+                            // Threshold to tune for keyphrase to balance between false alarms and misses
+                    .setKeywordThreshold(1e-45f)
 
-                        // Use context-independent phonetic search, context-dependent is too slow for mobile
-                .setBoolean("-allphone_ci", true)
+                            // Use context-independent phonetic search, context-dependent is too slow for mobile
+                    .setBoolean("-allphone_ci", true)
 
-                .getRecognizer();
-        recognizer.addListener(this);
+                    .getRecognizer();
+            recognizer.addListener(this);
 
-        // Create keyword-activation search.
-        recognizer.addKeyphraseSearch(sInput, sInput);
+            // Create keyword-activation search.
+            recognizer.addKeyphraseSearch(sInput, sInput);
+        } catch(Exception e) {
+            settingData = getBaseContext().getSharedPreferences(SettingStorage, 0);
+            SharedPreferences.Editor editor = settingData.edit();
+            editor.putBoolean("isOn", false);
+            editor.commit();
+            stopSelf();
+        }
     }
 
     private void switchSearch(String searchName) {
@@ -118,10 +117,6 @@ public class WherePhoneService extends Service implements RecognitionListener {
             recognizer.startListening(searchName);
         else
             recognizer.startListening(searchName, 10000);
-        /*
-        String caption = getResources().getString(captions.get(searchName));
-        ((TextView) findViewById(R.id.caption_text)).setText(caption);
-        */
     }
 
     @Override
@@ -168,7 +163,7 @@ public class WherePhoneService extends Service implements RecognitionListener {
         }
     }
 
-    @Override
+
     public void onError(Exception e) {
 
     }
@@ -176,6 +171,17 @@ public class WherePhoneService extends Service implements RecognitionListener {
     @Override
     public void onTimeout() {
         switchSearch(sInput);
+    }
+
+    public void startTTS() {
+        reply = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if(status != TextToSpeech.ERROR){
+                    reply.setLanguage(Locale.UK);
+                }
+            }
+        });
     }
 
     public void getValues() {
