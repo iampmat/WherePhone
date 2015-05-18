@@ -101,10 +101,7 @@ public class WherePhoneService extends Service implements RecognitionListener {
             // Create keyword-activation search.
             recognizer.addKeyphraseSearch(sInput, sInput);
         } catch(Exception e) {
-            settingData = getBaseContext().getSharedPreferences(SettingStorage, 0);
-            SharedPreferences.Editor editor = settingData.edit();
-            editor.putBoolean("isOn", false);
-            editor.commit();
+            notInDictError();
             stopSelf();
         }
     }
@@ -197,6 +194,14 @@ public class WherePhoneService extends Service implements RecognitionListener {
         int getMaxPhoneVol = audioManager.getStreamMaxVolume(audioManager.STREAM_MUSIC);
         seekValConvert = ((seekVal * getMaxPhoneVol)/100);
         audioManager.setStreamVolume(audioManager.STREAM_MUSIC, seekValConvert, 0);
+    }
+
+    public void notInDictError() {
+        settingData = getBaseContext().getSharedPreferences(SettingStorage, 0);
+        SharedPreferences.Editor editor = settingData.edit();
+        editor.putBoolean("isOn", false);
+        editor.putString("error", "Your phrase can't be found in the dictionary");
+        editor.commit();
     }
 
     @Override

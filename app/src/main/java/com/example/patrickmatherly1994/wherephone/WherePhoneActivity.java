@@ -12,6 +12,9 @@ import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import static android.widget.Toast.makeText;
 
 
 public class WherePhoneActivity extends Activity {
@@ -44,6 +47,17 @@ public class WherePhoneActivity extends Activity {
 
         populateAllSettings();
 
+        setOnSPChangedListener();
+
+    }
+
+    public void setOnSPChangedListener() {
+        settingData.registerOnSharedPreferenceChangeListener(new SharedPreferences.OnSharedPreferenceChangeListener() {
+            @Override
+            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
+                populateAllSettings();
+            }
+        });
     }
 
     public void setEditTextOnFocusChangeListener() {
@@ -95,20 +109,13 @@ public class WherePhoneActivity extends Activity {
 
                     saveAllSettings(isChecked);
 
-                    // Closes the keyboard
                     disableInput();
 
                     rIntent = new Intent(getBaseContext(), WherePhoneService.class);
 
-                    /* Set up intent and attach keywords
-                    rIntent.putExtra("sInput", etInput.getText().toString().toLowerCase().replaceAll("[^\\w\\s]", ""));
-                    rIntent.putExtra("sOutput", etOutput.getText().toString().toLowerCase());
-                    rIntent.putExtra("seekVal", seekVal);
-                    */
-
                     startService(rIntent);
-                }
-                else if (!isChecked) {
+
+                } else if (!isChecked) {
                     stopService(rIntent);
                     saveAllSettings(isChecked);
                     enableInput();
@@ -118,6 +125,7 @@ public class WherePhoneActivity extends Activity {
     }
 
     public void populateAllSettings() {
+        checkError();
         settingData = getSharedPreferences(SettingStorage, 0);
         etInput.setText(settingData.getString("inputstring", "Where is my phone?"), TextView.BufferType.EDITABLE);
         etOutput.setText(settingData.getString("outputstring", ""), TextView.BufferType.EDITABLE);
@@ -146,6 +154,17 @@ public class WherePhoneActivity extends Activity {
         etInput.setFocusable(false);
         etOutput.setFocusable(false);
         seekBar.setEnabled(false);
+    }
+
+    public void checkError() {
+        settingData = getSharedPreferences(SettingStorage, 0);
+        String error = settingData.getString("error", "");
+        if(error != "") {
+            makeText(getApplicationContext(), error, Toast.LENGTH_SHORT).show();
+            SharedPreferences.Editor editor = settingData.edit();
+            editor.putString("error", "");
+            editor.commit();
+        }
     }
 
     public void hideKeyboard(View view) {
