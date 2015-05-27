@@ -37,6 +37,8 @@ public class WherePhoneService extends Service implements RecognitionListener {
 
     private AsyncTask t;
 
+    private final int INPUT_LIMIT = 20;
+
 
     public WherePhoneService() {
     }
@@ -98,11 +100,16 @@ public class WherePhoneService extends Service implements RecognitionListener {
                     .getRecognizer();
             recognizer.addListener(this);
 
+            if(!correctLength()) { throw new Exception("length"); }
+
             // Create keyword-activation search.
             recognizer.addKeyphraseSearch(sInput, sInput);
         } catch(Exception e) {
-            notInDictError();
-            stopSelf();
+            if(e.getMessage() == "length") { stopSelf(); }
+            else {
+                notInDictError();
+                stopSelf();
+            }
         }
     }
 
@@ -202,6 +209,19 @@ public class WherePhoneService extends Service implements RecognitionListener {
         editor.putBoolean("isOn", false);
         editor.putString("error", "Your phrase can't be found in the dictionary");
         editor.commit();
+    }
+
+    public boolean correctLength() {
+        int inputLength = sInput.length();
+        if(inputLength <= INPUT_LIMIT) {
+            settingData = getBaseContext().getSharedPreferences(SettingStorage, 0);
+            SharedPreferences.Editor editor = settingData.edit();
+            editor.putBoolean("isOn", false);
+            editor.putString("error", "Your phrase must have a length of at least " + INPUT_LIMIT);
+            editor.commit();
+            return false;
+        }
+        else { return true; }
     }
 
     @Override

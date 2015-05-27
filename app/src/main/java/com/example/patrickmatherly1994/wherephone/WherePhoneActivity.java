@@ -16,6 +16,11 @@ import android.widget.Toast;
 
 import static android.widget.Toast.makeText;
 
+/*
+Errors: If the input is too short, the error is caught before the service can be started. If the
+phrase is not in our dictionary then the error is caught after the service starts. Therefore one
+sharedpreference key can be used because both possible errors will not occur at the same time.
+ */
 
 public class WherePhoneActivity extends Activity {
 
@@ -31,6 +36,7 @@ public class WherePhoneActivity extends Activity {
 
     public static String SettingStorage = "SavedData";
     SharedPreferences settingData;
+
 
     @Override
     public void onCreate(Bundle state) {
@@ -107,7 +113,7 @@ public class WherePhoneActivity extends Activity {
 
                     stopService(new Intent(getBaseContext(), WherePhoneService.class));
 
-                    saveAllSettings(isChecked);
+                    saveAllSettings(isChecked);  // auto-calls populateAllSettings(); checkError();
 
                     disableInput();
 
@@ -127,7 +133,7 @@ public class WherePhoneActivity extends Activity {
     public void populateAllSettings() {
         checkError();
         settingData = getSharedPreferences(SettingStorage, 0);
-        etInput.setText(settingData.getString("inputstring", "Where is my phone?"), TextView.BufferType.EDITABLE);
+        etInput.setText(settingData.getString("inputstring", "Hey where is my phone?"), TextView.BufferType.EDITABLE);
         etOutput.setText(settingData.getString("outputstring", ""), TextView.BufferType.EDITABLE);
         seekBar.setProgress(settingData.getInt("seekval", 0));
         ioSwitch.setChecked(settingData.getBoolean("isOn", false));
@@ -161,6 +167,7 @@ public class WherePhoneActivity extends Activity {
         String error = settingData.getString("error", "");
         if(error != "") {
             makeText(getApplicationContext(), error, Toast.LENGTH_SHORT).show();
+            settingData = getBaseContext().getSharedPreferences(SettingStorage, 0);
             SharedPreferences.Editor editor = settingData.edit();
             editor.putString("error", "");
             editor.commit();
