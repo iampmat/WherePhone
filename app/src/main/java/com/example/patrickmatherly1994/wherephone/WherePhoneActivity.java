@@ -30,6 +30,7 @@ public class WherePhoneActivity extends Activity {
 
     private EditText etInput;
     private EditText etOutput;
+    private static final float text_size = 30;
 
     private SeekBar seekBar;
     private int seekVal;
@@ -44,6 +45,8 @@ public class WherePhoneActivity extends Activity {
         setContentView(R.layout.activity_where_phone);
 
         initializeVariables();
+
+        setTextSize();
 
         setSeekBarChangeListener();
 
@@ -177,6 +180,11 @@ public class WherePhoneActivity extends Activity {
     public void hideKeyboard(View view) {
         InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    public void setTextSize() {
+        etInput.setTextSize(text_size);
+        etOutput.setTextSize(text_size);
     }
 
     public void initializeVariables() {
