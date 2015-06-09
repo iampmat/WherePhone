@@ -1,4 +1,9 @@
 # WherePhone
-Still in building stages... If you want you can try to build and run WherePhone in Android Studio.
-
-Enter what you want the application to listen for, and what it should respond. Then hit the toggle switch to turn listening on.
+WherePhone will be in Google Play soon
+  - Keyword detection anywhere in small to midsize rooms
+  - Customize voice activation and response
+  - Customize volume
+  - Settings will save everytime you start new detection
+  - Overrides garbage collection to continue background VR
+  - Minimal Battery usage
+  - Simple UI
