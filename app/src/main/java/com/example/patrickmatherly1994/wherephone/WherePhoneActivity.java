@@ -30,7 +30,7 @@ public class WherePhoneActivity extends Activity {
 
     private EditText etInput;
     private EditText etOutput;
-    private static final float text_size = 30;
+    private static final float text_size = 40;
 
     private SeekBar seekBar;
     private int seekVal;

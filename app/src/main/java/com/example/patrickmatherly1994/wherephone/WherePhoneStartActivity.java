@@ -17,7 +17,7 @@ public class WherePhoneStartActivity extends Activity {
     private TextView Input;
     private TextView Output;
 
-    private static final float text_size = 30;
+    private static final float text_size = 50;
 
     public static String SettingStorage = "SavedData";
     SharedPreferences settingData;
