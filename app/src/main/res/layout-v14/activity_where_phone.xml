@@ -1,10 +1,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical"
     android:padding="16dp"
     android:clickable="true"
-    android:focusableInTouchMode="true" >
+    android:focusableInTouchMode="true"
+    tools:context=".WherePhoneActivity" >
     
     <EditText
         android:id="@+id/et_input"
@@ -39,16 +41,6 @@
         android:paddingLeft="10dp" />
 
 
-    <Switch
-        android:id="@+id/ioSwitch"
-        android:paddingTop="30dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:text="@string/save_switch" />
-
-
     <SeekBar
         android:id="@+id/vSeekBar"
         android:paddingTop="30dp"
@@ -70,6 +62,16 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:paddingLeft="10dp" />
+
+    <Switch
+        android:id="@+id/ioSwitch"
+        android:paddingTop="30dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:text="@string/save_switch"
+        android:checked="false" />
 
 
 </LinearLayout>
